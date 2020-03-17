@@ -16,3 +16,4 @@ chromispos.jar
 build/
 .gradle
 .idea
+.DS_Store

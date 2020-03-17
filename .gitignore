@@ -9,7 +9,10 @@
 /chromispos.xml
 /chromispos.xml.backup
 /src-pos.zip
-/src-beans/uk/chromis/fixedimages/Thumbs.db
+/src-beans/src/main/java/uk/chromis/fixedimages/Thumbs.db
 chromispos.jar
 /chromisLiquibase.log
 /log4j.xml
+build/
+.gradle
+.idea

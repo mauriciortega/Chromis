@@ -1,0 +1,64 @@
+apply plugin: 'idea'
+apply plugin: 'java'
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+version = '0.9'
+
+repositories {
+    maven {
+        url "http://jaspersoft.artifactoryonline.com/jaspersoft/third-party-ce-artifacts"
+    }
+
+    mavenCentral()
+    jcenter()
+
+    maven {
+        url "http://essi-lab.eu/nexus/content/groups/open.repos"
+    }
+
+    flatDir {
+        dirs 'lib', 'lib/Mac_OS_X'
+    }
+}
+
+dependencies {
+    implementation 'commons-lang:commons-lang:2.6'
+    implementation 'org.rxtx:rxtx:2.1.7'
+    implementation 'org.swinglabs.swingx:swingx-core:1.6.3'
+    implementation 'com.miglayout:miglayout-swing:4.1'
+    implementation 'org.swinglabs:swing-layout:1.0.3'
+    implementation 'com.github.insubstantial:substance-swingx:7.3'
+    implementation 'org.apache.velocity:velocity:1.7'
+    implementation 'org.beanshell:bsh:2.0b5'
+    implementation 'net.sf.jasperreports:jasperreports:6.2.1'
+    implementation 'org.liquibase:liquibase-core:3.8.7'
+    implementation 'commons-codec:commons-codec:1.10'
+    implementation 'net.sf.barcode4j:barcode4j:2.1'
+    implementation 'org.javapos:javapos:1.13.6'
+    implementation 'com.fifesoft:rsyntaxtextarea:2.6.0'
+    implementation 'net.sourceforge.javacsv:javacsv:2.0'
+    implementation 'io.github.dheid:colorpicker:1.1'
+
+//    implementation 'eu.floraresearch:lablib-checkboxtre:4.0-beta-1'
+    implementation name: 'lablib-checkboxtree-4.0'
+
+    implementation name: 'colorpicker'
+}
+
+//create a single Jar with all dependencies
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'uk.chromis.pos.forms.StartPOS'
+    }
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+task runnableJar (type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'uk.chromis.pos.forms.StartPOS'
+    }
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}

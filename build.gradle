@@ -1,3 +1,13 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:5.2.0'
+    }
+}
+
+apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'idea'
 apply plugin: 'java'
 
@@ -39,11 +49,14 @@ dependencies {
     implementation 'com.fifesoft:rsyntaxtextarea:2.6.0'
     implementation 'net.sourceforge.javacsv:javacsv:2.0'
     implementation 'io.github.dheid:colorpicker:1.1'
+    implementation 'mysql:mysql-connector-java:5.1.48'
+    implementation 'org.projectlombok:lombok:1.18.12'
 
 //    implementation 'eu.floraresearch:lablib-checkboxtre:4.0-beta-1'
     implementation name: 'lablib-checkboxtree-4.0'
 
     implementation name: 'colorpicker'
+    implementation 'com.sun.jersey:jersey-client:1.8'
 }
 
 //create a single Jar with all dependencies
@@ -61,4 +74,17 @@ task runnableJar (type: Jar) {
     }
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'uk.chromis.pos.forms.StartPOS'
+    }
+}
+
+// Este es el bueno
+shadowJar {
+    baseName = 'chromispos'
+    classifier = ''
+    archiveVersion = ''
 }

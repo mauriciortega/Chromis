@@ -110,7 +110,7 @@ public class StartPOS {
             }
         }
 
-        File newIcons = null;
+        URL newIcons = null;
         String colour;
         if (AppConfig.getInstance().getProperty("icon.colour") == null || AppConfig.getInstance().getProperty("icon.colour").equals("")) {
             colour = "royalblue";
@@ -118,23 +118,26 @@ public class StartPOS {
             colour = AppConfig.getInstance().getProperty("icon.colour");
         }
 
-        newIcons = new File(currentPath + "/iconsets/" + colour.toLowerCase() + "images.jar");
-        if (!newIcons.exists()) {
-            newIcons = new File(currentPath + "/iconsets/royalblueimages.jar");
+        newIcons = StartPOS.class.getResource("/iconsets/" + colour.toLowerCase() + "images.jar");
+        if (newIcons != null) {
+            newIcons = StartPOS.class.getResource("/iconsets/royalblueimages.jar");
         }
 
         try {
+//            BufferedReader read = new BufferedReader(
+//                    new InputStreamReader(newIcons.openStream()));
+
             URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
             Method m = URLClassLoader.class.getDeclaredMethod("addURL", new Class[]{URL.class});
             m.setAccessible(true);
-            m.invoke(urlClassLoader, newIcons.toURI().toURL());
+            m.invoke(urlClassLoader, newIcons);
             String cp = System.getProperty("java.class.path");
             if (cp != null) {
-                cp += File.pathSeparatorChar + newIcons.getCanonicalPath();
+                cp += File.pathSeparatorChar + newIcons.getPath();
             } else {
                 cp = newIcons.toURI().getPath();
             }
-            System.setProperty("java.class.path", cp);
+            System.setProperty("java.class.path", newIcons.getPath());
         } catch (Exception ex) {
         }
 

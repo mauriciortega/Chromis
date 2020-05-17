@@ -22,6 +22,7 @@
  */
 package uk.chromis.pos.epm;
 
+import org.apache.commons.lang.StringUtils;
 import uk.chromis.basic.BasicException;
 import uk.chromis.beans.JCalendarDialog;
 import uk.chromis.data.gui.MessageInf;
@@ -33,6 +34,9 @@ import uk.chromis.pos.forms.AppLocal;
 import uk.chromis.pos.forms.AppView;
 
 import java.awt.*;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -156,43 +160,36 @@ public final class LeavesView extends javax.swing.JPanel implements EditorRecord
     }
 
     private boolean IsValidEndDate(Date date) {
-        Date systemDate = new Date();
-        if (!m_jStartDate.getText().equals("")) {
-            Date startdate;
+        LocalDate systemDate = LocalDate.now();
+        LocalDate givenDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        if (StringUtils.isNotBlank(m_jStartDate.getText())) {
             try {
-                startdate = (Date) Formats.TIMESTAMP.parseValue(m_jStartDate.getText());
-                return (startdate.before(date)
-                        || (startdate.getDate() == date.getDate()
-                        && startdate.getMonth() == date.getMonth()
-                        && startdate.getYear() == date.getYear()));
-
+                LocalDate startdate = ((Date) Formats.TIMESTAMP.parseValue(m_jStartDate.getText()))
+                        .toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate();
+                return !startdate.isAfter(givenDate);
             } catch (BasicException ex) {
             }
         }
-        return (systemDate.before(date)
-                || (systemDate.getDate() == date.getDate()
-                && systemDate.getMonth() == date.getMonth()
-                && systemDate.getYear() == date.getYear()));
+        return (!systemDate.isAfter(givenDate));
     }
 
-// TODO - rewrite IsValidStartDate using Apache commons or Calendar 
     private boolean IsValidStartDate(Date date) {
-        Date systemDate = new Date();
+        LocalDate systemDate = LocalDate.now();
+        LocalDate givenDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         boolean validEndDate = true;
         if (!m_jEndDate.getText().equals("")) {
             try {
-                Date enddate = (Date) Formats.TIMESTAMP.parseValue(m_jEndDate.getText());
-                validEndDate = (enddate.after(date)
-                        || (enddate.getDate() == date.getDate()
-                        && enddate.getMonth() == date.getMonth()
-                        && enddate.getYear() == date.getYear()));
+                LocalDate enddate = ((Date) Formats.TIMESTAMP.parseValue(m_jEndDate.getText()))
+                        .toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate();
+                validEndDate = (!enddate.isBefore(givenDate));
             } catch (BasicException ex) {
             }
         }
-        return validEndDate && (systemDate.before(date)
-                || (systemDate.getDate() == date.getDate()
-                && systemDate.getMonth() == date.getMonth()
-                && systemDate.getYear() == date.getYear()));
+        return validEndDate && (!systemDate.isAfter(givenDate));
     }
 
     /**
